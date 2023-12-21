@@ -1,0 +1,33 @@
+version: "3.1"
+# 服务配置
+services:
+  elasticsearch:
+    container_name: elasticsearch-7.17.0
+    image: elasticsearch:7.17.0
+    environment:
+      - "ES_JAVA_OPTS=-Xms1024m -Xmx1024m"
+      - "http.host=0.0.0.0"
+      - "node.name=elastic01"
+      - "cluster.name=cluster_elasticsearch"
+      - "discovery.type=single-node"
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - ./es/plugins:/usr/share/elasticsearch/plugins
+      - ./es/data:/usr/share/elasticsearch/data
+    networks:
+      - elastic_net
+
+  kibana:
+    container_name: kibana-7.17.0
+    image: kibana:7.17.0
+    ports:
+      - "5601:5601"
+    networks:
+      - elastic_net
+
+# 网络配置
+networks:
+  elastic_net:
+    driver: bridge

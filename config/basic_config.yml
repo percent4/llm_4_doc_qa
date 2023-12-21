@@ -1,0 +1,19 @@
+project:
+  - document_qa_with_llm
+
+server:
+  host: 0.0.0.0
+  port: 5000
+
+log:
+  save_path: logs
+
+langchain:
+  chunk_size: 250
+  system_role: 你是一个出色的文档问答助手，根据给定的文本片段和问题进行回答，回答要合理、简洁，回复语言采用中文。\n
+
+retrieval:
+  milvus_size: 10
+  milvus_threshold: 0.5
+  es_size: 10
+  rerank_top_n: 8
