@@ -115,20 +115,16 @@ class DocumentQA(object):
         )
         return result
 
-    @staticmethod
     # sort the es and milvus retrieval results by rrf
     def retrieval(
-            es_result: list[dict],
-            milvus_result: list[dict]
+            self
     ) -> list[dict[str, float]]:
         """
         Sort the ES and Milvus retrieval results by RRF.
-        :param es_result: list of ES retrieval result
-        :param milvus_result: list of Milvus retrieval result
         :return:
         """
-        es_result = [_["content"] for _ in es_result]
-        milvus_result = [_["content"] for _ in milvus_result]
+        es_result = [_["content"] for _ in self._es_retrieval()]
+        milvus_result = [_["content"] for _ in self._milvus_retrieval()]
         doc_lists = [es_result, milvus_result]
         # Create a union of all unique documents in the input doc_lists
         all_documents = set()
@@ -153,12 +149,18 @@ class DocumentQA(object):
         result = []
         for i in range(len(sorted_documents)):
             text, score = sorted_documents[i]
-            result.append({"content": text, "score": score})
+            result.append({"text": text, "score": score})
+        # add langfuse tracing
+        self.trace.span(
+            name="Retrieval RRF",
+            input={"es_result": es_result, "milvus_result": milvus_result},
+            output=result
+        )
         return result
 
     # rerank by Cohere
     def rerank(self, before_rerank_contents):
-        documents = [_["content"] for _ in before_rerank_contents]
+        documents = [_["text"] for _ in before_rerank_contents]
         cohere_client = cohere.Client(os.getenv("COHERE_API_KEY", ""))
         results = cohere_client.rerank(model="rerank-multilingual-v2.0",
                                        query=self.query,
@@ -166,7 +168,7 @@ class DocumentQA(object):
                                        top_n=5)
         after_rerank_contents = []
         for hit in results:
-            after_rerank_contents.append({"content": hit.document['text'], "score": hit.relevance_score})
+            after_rerank_contents.append({"text": hit.document['text'], "score": hit.relevance_score})
         self.trace.span(
             name="Cohere Rerank",
             input=before_rerank_contents,
@@ -177,14 +179,12 @@ class DocumentQA(object):
     # answer by OpenAI
     def answer(self):
         # retrieve
-        es_result = self._es_retrieval()
-        milvus_result = self._milvus_retrieval()
-        before_rerank_contents = self.retrieval(es_result, milvus_result)
+        before_rerank_contents = self.retrieval()
         after_rerank_contents = self.rerank(before_rerank_contents)
         # construct prompt
         prompt = "Based on the following documents, answer the question: \n"
         for i, text_dict in enumerate(after_rerank_contents):
-            prompt += f"document {i+1}: {text_dict['content']}\n"
+            prompt += f"document {i+1}: {text_dict['text']}\n"
         prompt += f"\nHere is the user's question: {self.query}\nPlease answer the question."
         # chat completion
         client = OpenAI(api_key=os.getenv("OPENAI_API_KEY", ""))
