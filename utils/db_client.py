@@ -6,7 +6,7 @@ from elasticsearch import Elasticsearch
 from pymilvus import connections, Collection
 
 # 连接Elasticsearch
-es_client = Elasticsearch([{'host': 'localhost', 'port': 9200}])
+es_client = Elasticsearch(hosts=["http://localhost:9200"])
 
 # 连接Milvus
 connections.connect("default", host="localhost", port="19530")

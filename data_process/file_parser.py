@@ -55,19 +55,19 @@ class FileParser(object):
 
 
 if __name__ == '__main__':
-    txt_file_path = "/Users/admin/PycharmProjects/document_qa_with_llm/files/gdp.txt"
-    content = FileParser(txt_file_path).parse()
-    print(content)
+    # txt_file_path = "/Users/admin/PycharmProjects/document_qa_with_llm/files/gdp.txt"
+    # content = FileParser(txt_file_path).parse()
+    # print(content)
+    #
+    # pdf_file_path = "/Users/admin/PycharmProjects/document_qa_with_llm/files/oppo_n3_flip.pdf"
+    # content = FileParser(pdf_file_path).parse()
+    # print(content)
+    #
+    # docx_file_path = "/Users/admin/PycharmProjects/document_qa_with_llm/files/haicaihua.docx"
+    # content = FileParser(docx_file_path).parse()
+    # print(content)
 
-    pdf_file_path = "/Users/admin/PycharmProjects/document_qa_with_llm/files/oppo_n3_flip.pdf"
-    content = FileParser(pdf_file_path).parse()
-    print(content)
-
-    docx_file_path = "/Users/admin/PycharmProjects/document_qa_with_llm/files/haicaihua.docx"
-    content = FileParser(docx_file_path).parse()
-    print(content)
-
-    url = "https://gaokao.xdf.cn/202303/12967078.html"
-    url = "https://www.hntv.tv/50rd/article/1/1700396378818207745?v=1.0"
+    url = "http://www.xuexili.com/daxue/65462.html"
+    # url = "https://www.hntv.tv/50rd/article/1/1700396378818207745?v=1.0"
     content = FileParser(url).parse()
     print(content)

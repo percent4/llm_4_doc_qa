@@ -15,7 +15,7 @@
 2. 安装Milvus（版本2.2.1），建议使用Docker搭建环境，参考文件：docs/docker-compose-milvus.yml
 3. 安装Python第三方模块，参考`requirements.txt`
 4. 启动web服务: `python3 server.py`
-5. 可视化web页面启动: server_gradio.py`
+5. 可视化web页面启动: `server_gradio.py`
 
 ### HTTP请求
 
@@ -73,6 +73,7 @@ Embedding模型:
 - [x] 加入Rerank模型
 - [x] 使用GPT-4进行模型评估（指标：CORRECTNESS）
 - [x] 数据分析可视化
+- [x] Langfuse可视化追踪(tracing)
 
 ### 数据分析可视化
 
